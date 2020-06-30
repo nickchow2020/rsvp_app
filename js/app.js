@@ -2,6 +2,7 @@ const form = document.getElementById("registrar");
 const input = form.querySelector("input");
 const ul = document.getElementById("invitedList")
 const main = document.querySelector(".main");
+const clearBtn = document.querySelector(".clear");
 
 
 //step going to create a div tag with label and input checkbox 
@@ -18,33 +19,28 @@ main.insertBefore(div,ul);
 
 //Create the list we need to define the fundemental of the li element,
 // with botton remove,edit and input checkbox
-function createLi(){
+function createLi(arr){
     const li = document.createElement("li");
-
     const span = document.createElement("span");
-    span.textContent = input.value
-    
+    span.textContent = arr
     const label = document.createElement("label");
     label.textContent = "Confirmed";
-
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
-
     const editBtn = document.createElement("button");
     editBtn.textContent = "edit";
-
     const removeBtn = document.createElement("button");
     removeBtn.textContent = "remove";
-
     li.appendChild(span);
     label.appendChild(checkbox);
     li.appendChild(label);
     ul.appendChild(li);
     li.appendChild(editBtn);
     li.appendChild(removeBtn);
-
     return li;
 }
+
+
 // function that is for edit button
 function editBtn(arr){
    const span = document.createElement("input");
@@ -76,16 +72,44 @@ function removeLi(arr){
    liParent.removeChild(li);
 }
 
+
+//function that is going to return the local data
+function retrieveLocalData(){
+  const invitees = localStorage.getItem("recentInvitees");
+  if(invitees){
+    return JSON.parse(invitees)
+  }else{
+    return [];
+  }
+}
+
+//function that is going to set localStorage
+function saveInvitees(arr){
+  const invitees = retrieveLocalData();
+  if(!arr|| invitees.indexOf(arr) > -1){
+    return false
+  }else{
+    invitees.push(arr);
+    localStorage.setItem("recentInvitees",JSON.stringify(invitees))
+    return true;
+  }
+}
+
 //Eventhandler that is going to input box that is going to 
 //generate the invitees
 
+
 form.addEventListener("submit",(e)=>{
   e.preventDefault();
-  if(input.value !== ""){
-    createLi();
+  if(input.value !== ""){ 
+    saveInvitees(input.value);
+    createLi(input.value)
     input.value = "";
   }
 })
+
+const invitees = retrieveLocalData();
+invitees.forEach((invitee)=>createLi(invitee));
 
 //Eventhandler that isgoing to add a responded class name to each li tags
 ul.addEventListener("change",(e)=>{
@@ -130,4 +154,9 @@ inputdiv.addEventListener("change",(e)=>{
       lis[i].style.display = "";
     }
   }
+})
+
+clearBtn.addEventListener("click",()=>{
+  ul.innerHTML = "";
+  localStorage.removeItem("recentInvitees");
 })

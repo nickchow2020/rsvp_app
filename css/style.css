@@ -5,6 +5,10 @@
 * {
   box-sizing: border-box;
 }
+.clear{
+  font-size: 1.2rem;
+  margin-top: 1rem;
+}
 body {
   font-family: 'Lato', sans-serif;
   color: #4c4c4c;
